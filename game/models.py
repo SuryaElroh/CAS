@@ -16,11 +16,12 @@ class ActionCard(Card):
     duration = models.IntegerField()
     type = models.ForeignKey('TypeCard', on_delete=models.DO_NOTHING)
     value = models.FloatField()
+    alcohol = models.ForeignKey('Alcohol', on_delete=models.DO_NOTHING)
 
 
 class ActionCardDescriptors(admin.ModelAdmin):
-    list_display = ['name', 'type', 'value', 'price']
-    list_filter = ['name', 'type', 'value', 'price']
+    list_display = ['name', 'type', 'value', 'alcohol', 'price']
+    list_filter = ['name', 'type', 'value', 'alcohol', 'price']
     ordering = ['name']
 
     fieldsets = ((
@@ -29,7 +30,7 @@ class ActionCardDescriptors(admin.ModelAdmin):
         ),
         (
             'Card effects',
-            {'fields': ['type', 'value', 'duration']}
+            {'fields': ['type', 'value', 'alcohol', 'duration']}
         )
     )
 
@@ -42,8 +43,8 @@ class TypeCard(models.Model):
 
 
 class CharacterCard(Card):
-    weakness = models.CharField(max_length=20)
-    strength = models.CharField(max_length=20)
+    weakness = models.ForeignKey('Alcohol', on_delete=models.DO_NOTHING)
+    strength = models.ForeignKey('Alcohol', on_delete=models.DO_NOTHING)
     maxAlcohol = models.FloatField()
 
 
@@ -61,6 +62,13 @@ class CharacterCardDescriptors(admin.ModelAdmin):
             {'fields': ['weakness', 'strength', 'maxAlcohol']}
         )
     )
+
+
+class Alcohol(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
 
 
 class TypeStart(models.Model):
