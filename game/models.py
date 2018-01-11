@@ -1,51 +1,101 @@
 from django.db import models
+from django.contrib import admin
 
-class TypeSpecialCard(models.Model):
-    name = models.CharField(max_length=50)
 
 class Card(models.Model):
     name = models.CharField(max_length=40)
     imageSource = models.CharField(max_length=255)
     text = models.CharField(max_length=100)
-    duration = models.IntegerField()
     price = models.IntegerField()
 
     class Meta:
         abstract = True
 
-class DefensiveCard(Card):
+
+class ActionCard(Card):
+    duration = models.IntegerField()
+    type = models.ForeignKey('TypeCard', on_delete=models.DO_NOTHING)
     value = models.FloatField()
 
-class OffensiveCard(Card):
-    value = models.FloatField()
 
-class SpecialCard(Card):
-    type = models.ForeignKey('TypeSpecialCard', on_delete=models.DO_NOTHING,)
-    value = models.IntegerField()
+class ActionCardDescriptors(admin.ModelAdmin):
+    list_display = ['name', 'type', 'value', 'price']
+    list_filter = ['name', 'type', 'value', 'price']
+    ordering = ['name']
+
+    fieldsets = ((
+            'Card data',
+            {'fields': ['name', 'text', 'imageSource', 'price']}
+        ),
+        (
+            'Card effects',
+            {'fields': ['type', 'value', 'duration']}
+        )
+    )
+
+
+class TypeCard(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
 
 class CharacterCard(Card):
     weakness = models.CharField(max_length=20)
     strength = models.CharField(max_length=20)
     maxAlcohol = models.FloatField()
 
+
+class CharacterCardDescriptors(admin.ModelAdmin):
+    list_display = ['name', 'weakness', 'strength', 'maxAlcohol', 'price']
+    list_filter = ['name', 'weakness', 'strength', 'maxAlcohol', 'price']
+    ordering = ['name']
+
+    fieldsets = ((
+            'Card data',
+            {'fields': ['name', 'text', 'imageSource', 'price']}
+        ),
+        (
+            'Card effects',
+            {'fields': ['weakness', 'strength', 'maxAlcohol']}
+        )
+    )
+
+
 class TypeStart(models.Model):
     name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
 
 
 class TypeDeck(models.Model):
     name = models.CharField(max_length=30)
 
+    def __str__(self):
+        return self.name
+
 
 class TypeKickOff(models.Model):
     name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
 
 
 class TypeEnding(models.Model):
     name = models.CharField(max_length=30)
 
+    def __str__(self):
+        return self.name
+
 
 class EndDeckEffect(models.Model):
     name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
 
 
 class Parameters(models.Model):
